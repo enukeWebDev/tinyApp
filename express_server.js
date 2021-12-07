@@ -32,23 +32,35 @@ app.get('/urls/new', (req, res) => {
 
 //Add a POST route to receive the form submission
 app.post('/urls', (req, res) => {
-  console.log(req.body); //Log the POST request body to the console
-  res.send('Valid URL...'); //Respond with 'ok'
+  //console.log(req.body); //Log the POST request body to the console
+  //res.send('Valid URL...'); //Respond with 'ok'
+  let randomAlphaNumeric = generateRandomString(); //Tues - generate the random alpha-numeric code
+  urlDatabase[randomAlphaNumeric] = req.body.longURL;
+  //console.log(`req.body);
+  res.redirect(`/urls/${randomAlphaNumeric}`);
 });
 
 //Render information about the a single URL
 app.get('/urls/:shortURL', (req, res) => {
-  let shortURL = req.params.shortURL; //Assign to a variable for easy access later - keys
-  let longURL = urlDatabase[shortURL]; //Assign to a variable for easy access later - values
+  const shortURL = req.params.shortURL; //Assign to a variable for easy access later - keys
+  const longURL = urlDatabase[shortURL]; //Assign to a variable for easy access later - values
   const templateVars = { shortURL, longURL };
   // const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render('urls_show', templateVars);
 });
 
+
+//Tues - Delete the created shortURL
+app.post('/urls/:shortURL/delete', (req, res) => {
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect(`/urls`);
+});
+
 //Redirect any request to it's long URL
 app.get('/u/:shortURL', (req, res) => {
-  console.Console; onabort(urlDatabase);
   const longURL = urlDatabase[req.params.shortURL];
+  console.log(req.params.shortURL, longURL); //Tues - add
   res.redirect(longURL);
 });
 
@@ -64,6 +76,6 @@ app.listen(PORT, () => {
 //using base 36 toString to look up from numbers (0-9) & letters (A-Z)
 //substr will extract characters to form the 6 random characters
 function generateRandomString() {
-  let randomStr = Math.random().toString(36).substr(0, 5);
+  let randomStr = Math.random().toString(36).substr(0, 6);
   return randomStr;
 }
