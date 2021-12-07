@@ -33,7 +33,7 @@ app.get('/urls/new', (req, res) => {
 //Add a POST route to receive the form submission
 app.post('/urls', (req, res) => {
   console.log(req.body); //Log the POST request body to the console
-  res.send('Ok'); //Respond with 'ok'
+  res.send('Valid URL...'); //Respond with 'ok'
 });
 
 //Render information about the a single URL
@@ -47,6 +47,7 @@ app.get('/urls/:shortURL', (req, res) => {
 
 //Redirect any request to it's long URL
 app.get('/u/:shortURL', (req, res) => {
+  console.Console; onabort(urlDatabase);
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
