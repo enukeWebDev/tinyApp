@@ -52,7 +52,7 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-//Working on this one right now***
+//
 app.post('/urls/:id', (req, res) => {
   const shortURL = req.params.id;
   const newURL = req.body.newURL;
@@ -61,7 +61,7 @@ app.post('/urls/:id', (req, res) => {
   res.redirect('/urls');
 });
 
-//Tues - Delete the created shortURL
+//Delete the created shortURL
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
