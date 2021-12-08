@@ -23,6 +23,7 @@
             <th scope="col">Short URL</th>
             <th scope="col">Long URL</th>
             <th scope="col">Delete</th>
+            <th scope="col">Edit</th>
             <!-- Tues - <th scope="col">Delete</th> -->
           </tr>
         </thead>
@@ -36,6 +37,11 @@
               <%= urls[url] %>
             </td>
             <!-- Tues -->
+            <td>
+              <button>
+                <a href="/urls/<%= url %>">EDIT</a>
+              </button>
+            </td>
             <td>
               <form method="POST" action="/urls/<%= url %>/delete">
                 <button>DELETE</button>
