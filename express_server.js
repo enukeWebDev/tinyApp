@@ -2,9 +2,11 @@ const express = require('express');
 const app = express();
 const PORT = 8080; //default port
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
+app.use(cookieParser());
 
 const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
@@ -21,13 +23,14 @@ app.get('/urls.json', (req, res) => {
 
 //Add a route for /urls
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username: req.cookies.username }; //Passing the username
   res.render('urls_index', templateVars);
 });
 
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new');
+  const templateVars = { username: req.cookies.username } //Passing the username
+  res.render('urls_new', templateVars);
 });
 
 //Add a POST route to receive the form submission
@@ -44,7 +47,7 @@ app.post('/urls', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL; //Assign to a variable for easy access later - keys
   const longURL = urlDatabase[shortURL]; //Assign to a variable for easy access later - values
-  const templateVars = { shortURL, longURL };
+  const templateVars = { shortURL, longURL, username: req.cookies.username }; //Passing the username
   // const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render('urls_show', templateVars);
 });
@@ -74,6 +77,20 @@ app.get('/u/:shortURL', (req, res) => {
 
 app.get('/hello', (req, res) => {
   res.send('<html><body>Hello <b>World</b></body></html>\n');
+});
+
+//The Login Route
+app.post('/login', (req, res) => {
+  let username = req.body.username;
+  //console.log(req.body.username);
+  res.cookie('username', username); //set a cookie
+  res.redirect('/urls');
+});
+
+//The Logout Route
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/urls')
 });
 
 app.listen(PORT, () => {
