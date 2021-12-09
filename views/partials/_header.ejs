@@ -9,21 +9,47 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+
+        <% if (!user) { %>
+          <a class="nav-item nav-link" href="/register">Register</a>
+          <% } %>
+
+            <% if (!user) { %>
+              <a class="nav-item nav-link" href="/login">Log In</a>
+              <% } %>
+
       </div>
     </div>
     <!-- The Logout Form -->
-    <% if (username) { %>
+    <% if (user) { %>
+      <div>
+        <p class="card-text"> Logged In As: <%= user.email %>
+        </p>
+      </div>
       <form method="POST" action="/logout">
-        <label for="">Logged In As: <%= username %></label>
-        <button type="submit">Logout</button>
+        <button type="submit" class="btn btn-primary">Logout</button>
       </form>
+      <!--
+      <form method="POST" action="/logout">
+        <button type="submit" class="btn btn-primary">Logout</button>
+      </form>
+      -->
       <% } else { %>
-        <!-- The Login Form -->
+        <div>
+          <p>Not Logged In</p>
+        </div>
+
+
+        <!-- The Login Form 
         <form method="POST" action="/login">
           <label for="username">Username:</label>
           <input name="username" type="text" placeholder="username">
           <button type="submit">Sign In:</button>
         </form>
+        -->
+
         <% } %>
+
+
   </nav>
 </header>
