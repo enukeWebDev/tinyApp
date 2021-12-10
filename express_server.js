@@ -76,19 +76,19 @@ app.post('/login', (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
-  const bcryptPassword = bcrypt.hashSync(password, 8);
-  const syncPassword = bcrypt.compareSync(password, bcryptPassword);
-  const user_id = lookUpUserByEmail(email);
-
 
   if (email === '' || password === '') {
     res.status(400).send('Email & Password Cannot Be Blank - Try Again!');
   }
 
+  const user_id = lookUpUserByEmail(email);
+
   if (!user_id) {
     res.status(403).send('Email Does Not Exist - Try Again!');
   }
-
+  
+  const syncPassword = bcrypt.compareSync(password, users[user_id].password);
+    
   if (!syncPassword) {
     res.status(403).send('Password Does Not Much - Try Again!');
   }
@@ -103,6 +103,7 @@ app.post('/login', (req, res) => {
 //Add a route for /urls
 app.get('/urls', (req, res) => {
   //const templateVars = { urls: urlDatabase, username: req.cookies.username }; //Passing the username
+  console.log(req.session.user_id);
   const templateVars = {
     compressed: compressDatabase(req.session.user_id),
     urls: urlDatabase,
@@ -110,6 +111,7 @@ app.get('/urls', (req, res) => {
     accountInfo: req.session.user_id,
     user: lookUpLoggedInUser(req)
   };
+  console.log(templateVars);
   res.render('urls_index', templateVars);
 });
 
@@ -159,9 +161,9 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls/:shortURL', (req, res) => {
-  //const postShortURL = ;
+//const postShortURL = 
 
-  urlDatabase[req.params.shortURL][longURL] = req.body.newURL;
+urlDatabase[req.params.shortURL]['longURL'] = req.body.newURL;
   res.redirect('/urls/');
 })
 
@@ -243,12 +245,11 @@ app.post('/register', (req, res) => {
   if (email === '' || password === '') {
     res.status(400).send('Email & Password Cannot Be Blank - Try Again!');
   }
-  else if (!lookUpLoggedInUser(req)) {
-    users[id] = { id, email, password: bcryptPassword };
-  }
   else if (lookUpUserByEmail(email)) {
     res.status(400).send('Email Already in the System');
+
   }
+  users[id] = { id, email, password: bcryptPassword };
   req.session.user_id = id;
   res.redirect('/urls');
 });
@@ -261,7 +262,7 @@ app.listen(PORT, () => {
 //using base 36 toString to look up from numbers (0-9) & letters (A-Z)
 //substr will extract characters to form the 6 random characters
 function generateRandomString() {
-  let randomStr = Math.random().toString(36).substr(0, 6);
+  let randomStr = Math.random().toString(36).substr(2, 6);
   return randomStr;
 }
 
@@ -288,7 +289,7 @@ function lookUpUserByEmail(email) {
 const compressDatabase = (accountInfo) => {
   let myDatabase = {};
   for (const info in urlDatabase) {
-    if (urlDatabase[info].user_id === accountInfo) {
+    if (urlDatabase[info].userID === accountInfo) {
       myDatabase[info] = urlDatabase[info];
     }
   }
