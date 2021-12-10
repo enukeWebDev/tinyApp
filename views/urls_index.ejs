@@ -43,18 +43,22 @@
                 <td>
 
                   <form method="POST" action="/urls/<%= url %>/delete">
+                    <button type="submit" class="btn btn-primary">Delete</button>
                       <% if (urls[url].user_id === accountInfo) { %>
-                  <button type="submit" class="btn btn-primary">Delete</button>
+                  <!--button was removed from here, else statement below-->
+                  
                     <% } else { %>
                       <p>Warning!</p>
                       <% } %>
+                    
                   </form>
                 </td>
                 <td>
 
                   <form method="POST" action="/urls/<%= url %>/edit">
+                    <button type="submit" class="btn btn-primary">Edit</button>
                       <% if (urls[url].user_id === accountInfo) { %>
-                  <button type="submit" class="btn btn-primary">Edit</button>
+                  <!--button was removed from here-->
                     <% } else { %>
                       <p>Warning!</p>
                       <% } %>

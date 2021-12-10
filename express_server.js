@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs')
+//const { lookUpUserByEmail, lookUpLoggedInUser, compressDatabase } = require('./helpers');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -16,7 +17,21 @@ app.use(cookieSession({
   keys: ['user_id']
 }));
 
-//Sample Data**
+//Test Data - Provided
+/*
+const users = {
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+  "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
+*/
 const users = {
   rtn23: {
     id: 'rtn23',
@@ -31,12 +46,7 @@ const users = {
   }
 };
 
-/*
-const urlDatabase = {
-  'b2xVn2': 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com'
-};
-*/
+//Sample Database - Provided
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
@@ -56,16 +66,17 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
+//Login Route
 app.get('/login', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    //username: null, //no user**
     user: lookUpLoggedInUser(req)
   };
   res.render('urls_login', templateVars);
 });
 
+//Login Route
 app.post('/login', (req, res) => {
   //Access the email & password 
   //Check if user exists or not
@@ -76,19 +87,16 @@ app.post('/login', (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
-
   if (email === '' || password === '') {
     res.status(400).send('Email & Password Cannot Be Blank - Try Again!');
   }
 
   const user_id = lookUpUserByEmail(email);
-
   if (!user_id) {
     res.status(403).send('Email Does Not Exist - Try Again!');
   }
   
   const syncPassword = bcrypt.compareSync(password, users[user_id].password);
-    
   if (!syncPassword) {
     res.status(403).send('Password Does Not Much - Try Again!');
   }
@@ -99,11 +107,9 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
-
-//Add a route for /urls
+//Add a route for '/urls'
 app.get('/urls', (req, res) => {
-  //const templateVars = { urls: urlDatabase, username: req.cookies.username }; //Passing the username
-  console.log(req.session.user_id);
+  //console.log(req.session.user_id);
   const templateVars = {
     compressed: compressDatabase(req.session.user_id),
     urls: urlDatabase,
@@ -116,7 +122,6 @@ app.get('/urls', (req, res) => {
 });
 
 //Add a GET route to show the form
-//** 
 app.get('/urls/new', (req, res) => {
   if (!lookUpLoggedInUser(req)) {
     res.redirect('/login');
@@ -132,14 +137,12 @@ app.get('/urls/new', (req, res) => {
 
 //Add a POST route to receive the form submission
 app.post('/urls', (req, res) => {
-  //console.log(req.body); //Log the POST request body to the console
-  //res.send('Valid URL...'); //Respond with 'ok'
-  let randomAlphaNumeric = generateRandomString(); //Tues - generate the random alpha-numeric code
+  let randomAlphaNumeric = generateRandomString(); 
   urlDatabase[randomAlphaNumeric] = {
     longURL: req.body.longURL,
     userID: req.session.user_id
   };
-  //console.log(`req.body);
+  //console.log(req.body);
   res.redirect(`/urls/${randomAlphaNumeric}`);
 });
 
@@ -153,7 +156,7 @@ app.get('/urls/:shortURL', (req, res) => {
     users: users,
     user: lookUpLoggedInUser(req)
   };
-  // const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+
   if (urlDatabase[shortURL].userID !== req.session.user_id) {
     res.status(400).send('Warning - You have NO Authorization!');
   }
@@ -161,21 +164,10 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls/:shortURL', (req, res) => {
-//const postShortURL = 
-
 urlDatabase[req.params.shortURL]['longURL'] = req.body.newURL;
   res.redirect('/urls/');
 })
 
-/*
-app.post('/urls/:id', (req, res) => {
-  const shortURL = req.params.id;
-  const newURL = req.body.newURL;
-  //console.log(req.body);
-  urlDatabase[shortURL] = newURL;
-  res.redirect('/urls');
-});
-*/
 //Delete the created shortURL
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
@@ -186,7 +178,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 //Redirect any request to it's long URL
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]['longURL'];
-  //console.log(req.params.shortURL, longURL); //Tues - add
+  //console.log(req.params.shortURL, longURL); 
   res.redirect(longURL);
 });
 
@@ -194,48 +186,23 @@ app.get('/hello', (req, res) => {
   res.send('<html><body>Hello <b>World</b></body></html>\n');
 });
 
-
-
-//The Login Route
-/*
-app.post('/login', (req, res) => {
-  let username = req.body.username;
-  //console.log(req.body.username);
-  res.cookie('username', username); //set a cookie
-  res.redirect('/urls');
-});
-*/
-//** 
-
-
-//** 
-//Login endpoint
-
 //The Logout Route
-/*
-app.post('/logout', (req, res) => {
-  res.clearCookie('username');
-  res.redirect('/urls')
-});
-*/
-
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('/urls');
 });
 
-//GET/register endpoint**
+//GET register endpoint
 app.get('/register', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    //username: null, //no user**
     user: lookUpLoggedInUser(req)
   };
   res.render('urls_register', templateVars);
 });
 
-//Registration Handler**
+//Registration Handler
 app.post('/register', (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
@@ -266,16 +233,16 @@ function generateRandomString() {
   return randomStr;
 }
 
-//Function to look up for logged in user**
+//Function to look up for logged in user
 function lookUpLoggedInUser(req) {
   const user_id = req.session.user_id;
   if (users[user_id]) {
     return users[user_id];
   }
-  return null; //user not logged in
+  return null; 
 }
 
-//Function to look up user by email***
+//Function to look up user by email
 function lookUpUserByEmail(email) {
   //Taking the value properties from the users object (provided above), then loop thru it
   for (const user in users) {
@@ -283,7 +250,7 @@ function lookUpUserByEmail(email) {
       return users[user].id;
     }
   }
-  return null; //email does not exist
+  return null;
 };
 
 const compressDatabase = (accountInfo) => {
