@@ -41,13 +41,24 @@
                   <%= urls[url].longURL %>
                 </td>
                 <td>
-                  <% if (urls[url].user_id===accountInfo) { %>
-                    <form method="POST" action="/urls/<%= url %>/delete>
-                  <button type=" submit" class="btn btn-primary">Delete</button>
-                      <% } else { %>
-                        <p>Warning!</p>
-                        <% } %>
-                    </form>
+
+                  <form method="POST" action="/urls/<%= url %>/delete">
+                      <% if (urls[url].user_id === accountInfo) { %>
+                  <button type="submit" class="btn btn-primary">Delete</button>
+                    <% } else { %>
+                      <p>Warning!</p>
+                      <% } %>
+                  </form>
+                </td>
+                <td>
+
+                  <form method="POST" action="/urls/<%= url %>/edit">
+                      <% if (urls[url].user_id === accountInfo) { %>
+                  <button type="submit" class="btn btn-primary">Edit</button>
+                    <% } else { %>
+                      <p>Warning!</p>
+                      <% } %>
+                  </form>
                 </td>
               </tr>
               <% } %>
