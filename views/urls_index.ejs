@@ -28,29 +28,31 @@
           </tr>
         </thead>
         </tbody>
-        <% for(let url in urls) {%>
-          <tr>
-            <td>
-              <%= url %>
-            </td>
-            <td>
-              <%= urls[url] %>
-            </td>
-            <!-- Tues -->
-            <td>
-              <button>
-                <a href="/urls/<%= url %>">EDIT</a>
-              </button>
-            </td>
-            <td>
-              <form method="POST" action="/urls/<%= url %>/delete">
-                <button>DELETE</button>
-              </form>
-            </td>
-            <!-- Tues -->
-          </tr>
+        <% if (!user) { %>
+          <p>Please Login First</p>
           <% } %>
-            </tbody>
+
+            <% for(let url in compressed) { %>
+              <tr>
+                <td>
+                  <%= url %>
+                </td>
+                <td>
+                  <%= urls[url].longURL %>
+                </td>
+                <td>
+                  <% if (urls[url].user_id===accountInfo) { %>
+                    <form method="POST" action="/urls/<%= url %>/delete>
+                  <button type=" submit" class="btn btn-primary">Delete</button>
+                      <% } else { %>
+                        <p>Warning!</p>
+                        <% } %>
+                    </form>
+                </td>
+              </tr>
+              <% } %>
+
+                </tbody>
       </table>
     </main>
     <!-- Bootstrap JS -->
