@@ -1,4 +1,4 @@
-/*
+
 
 //Function to look up for logged in user**
 function lookUpLoggedInUser(req, users) {
@@ -31,7 +31,13 @@ const compressDatabase = (accountInfo, urlDatabase) => {
   return myDatabase;
 };
 
+//Function to generate & returns a string of 6 random alphanumeric characters
+//using base 36 toString to look up from numbers (0-9) & letters (A-Z)
+//substr will extract characters to form the 6 random characters
+function generateRandomString() {
+  let randomStr = Math.random().toString(36).substr(2, 6);
+  return randomStr;
+};
 
-module.exports = { lookUpLoggedInUser, lookUpUserByEmail, compressDatabase };
+module.exports = { lookUpLoggedInUser, lookUpUserByEmail, compressDatabase, generateRandomString };
 
-*/

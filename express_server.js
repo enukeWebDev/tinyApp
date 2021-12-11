@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs')
-//const { lookUpUserByEmail, lookUpLoggedInUser, compressDatabase } = require('./helpers');
+const { lookUpUserByEmail, lookUpLoggedInUser, compressDatabase, generateRandomString } = require('./helpers');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -71,7 +71,7 @@ app.get('/login', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    user: lookUpLoggedInUser(req)
+    user: lookUpLoggedInUser(req, users)
   };
   res.render('urls_login', templateVars);
 });
@@ -91,7 +91,7 @@ app.post('/login', (req, res) => {
     res.status(400).send('Email & Password Cannot Be Blank - Try Again!');
   }
 
-  const user_id = lookUpUserByEmail(email);
+  const user_id = lookUpUserByEmail(email, users);
   if (!user_id) {
     res.status(403).send('Email Does Not Exist - Try Again!');
   }
@@ -111,11 +111,11 @@ app.post('/login', (req, res) => {
 app.get('/urls', (req, res) => {
   //console.log(req.session.user_id);
   const templateVars = {
-    compressed: compressDatabase(req.session.user_id),//add urlDatabase
+    compressed: compressDatabase(req.session.user_id, urlDatabase),//add urlDatabase
     urls: urlDatabase,
     users: users,
     accountInfo: req.session.user_id,
-    user: lookUpLoggedInUser(req)
+    user: lookUpLoggedInUser(req, users)
   };
   console.log(templateVars);
   res.render('urls_index', templateVars);
@@ -123,13 +123,13 @@ app.get('/urls', (req, res) => {
 
 //Add a GET route to show the form
 app.get('/urls/new', (req, res) => {
-  if (!lookUpLoggedInUser(req)) {
+  if (!lookUpLoggedInUser(req, users)) {
     res.redirect('/login');
   } else {
     const templateVars = {
       urls: urlDatabase,
       users: users,
-      user: lookUpLoggedInUser(req)
+      user: lookUpLoggedInUser(req, users)
     };
     res.render('urls_new', templateVars);
   }
@@ -154,7 +154,7 @@ app.get('/urls/:shortURL', (req, res) => {
     shortURL,
     longURL,
     users: users,
-    user: lookUpLoggedInUser(req)
+    user: lookUpLoggedInUser(req, users)
   };
 
   if (urlDatabase[shortURL].userID !== req.session.user_id) {
@@ -197,7 +197,7 @@ app.get('/register', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    user: lookUpLoggedInUser(req)
+    user: lookUpLoggedInUser(req, users)
   };
   res.render('urls_register', templateVars);
 });
@@ -212,7 +212,7 @@ app.post('/register', (req, res) => {
   if (email === '' || password === '') {
     res.status(400).send('Email & Password Cannot Be Blank - Try Again!');
   }
-  else if (lookUpUserByEmail(email)) {
+  else if (lookUpUserByEmail(email, users)) {
     res.status(400).send('Email Already in the System');
 
   }
@@ -225,6 +225,7 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+/*
 //Function to generate & returns a string of 6 random alphanumeric characters
 //using base 36 toString to look up from numbers (0-9) & letters (A-Z)
 //substr will extract characters to form the 6 random characters
@@ -262,3 +263,4 @@ const compressDatabase = (accountInfo) => {
   }
   return myDatabase;
 };
+*/
