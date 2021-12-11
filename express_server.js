@@ -17,21 +17,7 @@ app.use(cookieSession({
   keys: ['user_id']
 }));
 
-//Test Data - Provided
-/*
-const users = {
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
-  "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
-};
-*/
+//Test Data
 const users = {
   rtn23: {
     id: 'rtn23',
@@ -225,42 +211,3 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-/*
-//Function to generate & returns a string of 6 random alphanumeric characters
-//using base 36 toString to look up from numbers (0-9) & letters (A-Z)
-//substr will extract characters to form the 6 random characters
-function generateRandomString() {
-  let randomStr = Math.random().toString(36).substr(2, 6);
-  return randomStr;
-}
-
-//Function to look up for logged in user
-function lookUpLoggedInUser(req) {
-  const user_id = req.session.user_id;
-  if (users[user_id]) {
-    return users[user_id];
-  }
-  return null; 
-}
-
-//Function to look up user by email
-function lookUpUserByEmail(email) {
-  //Taking the value properties from the users object (provided above), then loop thru it
-  for (const user in users) {
-    if (users[user].email === email) {
-      return users[user].id;
-    }
-  }
-  return null;
-};
-
-const compressDatabase = (accountInfo) => {
-  let myDatabase = {};
-  for (const info in urlDatabase) {
-    if (urlDatabase[info].userID === accountInfo) {
-      myDatabase[info] = urlDatabase[info];
-    }
-  }
-  return myDatabase;
-};
-*/

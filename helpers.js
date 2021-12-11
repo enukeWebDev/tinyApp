@@ -1,5 +1,3 @@
-
-
 //Function to look up for logged in user**
 function lookUpLoggedInUser(req, users) {
   const user_id = req.session.user_id;

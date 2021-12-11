@@ -1,4 +1,3 @@
-/*
 const { assert } = require('chai');
 
 const { lookUpUserByEmail } = require('../helpers.js');
@@ -24,4 +23,3 @@ describe('lookUpUserByEmail', function() {
   });
 });
 
-*/
