@@ -111,7 +111,7 @@ app.post('/login', (req, res) => {
 app.get('/urls', (req, res) => {
   //console.log(req.session.user_id);
   const templateVars = {
-    compressed: compressDatabase(req.session.user_id),
+    compressed: compressDatabase(req.session.user_id),//add urlDatabase
     urls: urlDatabase,
     users: users,
     accountInfo: req.session.user_id,
