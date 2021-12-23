@@ -1,4 +1,4 @@
-const { response } = require("express");//** 
+const { response } = require("express");
 const express = require('express');
 const app = express();
 const PORT = 8080; //default port
@@ -62,15 +62,16 @@ app.get('/login', (req, res) => {
   res.render('urls_login', templateVars);
 });
 
-//Login Route
+/*
+- Login Route
+- Access the email & password 
+- Check if user exists or not
+- Check if password matches or not
+- Throw error status if not match
+- Assign email cookie using the user email
+- Redirect to /urls
+*/
 app.post('/login', (req, res) => {
-  //Access the email & password 
-  //Check if user exists or not
-  //Check if password matches or not
-  //Throw error status if not match
-  //Assign email cookie using the user email
-  //Redirect to /urls
-
   const email = req.body.email;
   const password = req.body.password;
   if (email === '' || password === '') {
@@ -81,7 +82,7 @@ app.post('/login', (req, res) => {
   if (!user_id) {
     res.status(403).send('Email Does Not Exist - Try Again!');
   }
-  
+
   const syncPassword = bcrypt.compareSync(password, users[user_id].password);
   if (!syncPassword) {
     res.status(403).send('Password Does Not Much - Try Again!');
@@ -93,11 +94,13 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
-//Add a route for '/urls'
+/*
+- Add a route for '/urls'
+- Add urlDatabase
+*/
 app.get('/urls', (req, res) => {
-  //console.log(req.session.user_id);
   const templateVars = {
-    compressed: compressDatabase(req.session.user_id, urlDatabase),//add urlDatabase
+    compressed: compressDatabase(req.session.user_id, urlDatabase),
     urls: urlDatabase,
     users: users,
     accountInfo: req.session.user_id,
@@ -123,12 +126,11 @@ app.get('/urls/new', (req, res) => {
 
 //Add a POST route to receive the form submission
 app.post('/urls', (req, res) => {
-  let randomAlphaNumeric = generateRandomString(); 
+  let randomAlphaNumeric = generateRandomString();
   urlDatabase[randomAlphaNumeric] = {
     longURL: req.body.longURL,
     userID: req.session.user_id
   };
-  //console.log(req.body);
   res.redirect(`/urls/${randomAlphaNumeric}`);
 });
 
@@ -150,7 +152,7 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls/:shortURL', (req, res) => {
-urlDatabase[req.params.shortURL]['longURL'] = req.body.newURL;
+  urlDatabase[req.params.shortURL]['longURL'] = req.body.newURL;
   res.redirect('/urls/');
 })
 
@@ -164,7 +166,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 //Redirect any request to it's long URL
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]['longURL'];
-  //console.log(req.params.shortURL, longURL); 
   res.redirect(longURL);
 });
 

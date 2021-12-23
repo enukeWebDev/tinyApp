@@ -17,7 +17,6 @@
             <% if (!user) { %>
               <a class="nav-item nav-link" href="/login">Log In</a>
               <% } %>
-
       </div>
     </div>
     <!-- The Logout Form -->
@@ -29,27 +28,10 @@
       <form method="POST" action="/logout">
         <button type="submit" class="btn btn-primary">Logout</button>
       </form>
-      <!--
-      <form method="POST" action="/logout">
-        <button type="submit" class="btn btn-primary">Logout</button>
-      </form>
-      -->
       <% } else { %>
         <div>
           <p>Not Logged In</p>
         </div>
-
-
-        <!-- The Login Form 
-        <form method="POST" action="/login">
-          <label for="username">Username:</label>
-          <input name="username" type="text" placeholder="username">
-          <button type="submit">Sign In:</button>
-        </form>
-        -->
-
         <% } %>
-
-
   </nav>
 </header>
